@@ -1,5 +1,5 @@
 import Axios from 'axios';
-import {INSHORTS_BASE_URL} from '../constants/Constants';
+import { INSHORTS_BASE_URL } from '../constants/Constants';
 const NAMESPACE = 'news';
 
 const FETCH_NEWS_LOADING = 'FETCH_NEWS_LOADING';
@@ -34,16 +34,16 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
   if (action.namespace !== NAMESPACE) {
-    return {...state};
+    return { ...state };
   }
 
   switch (action.type) {
     case FETCH_NEWS_LOADING: {
-      return {...state, isLoading: true};
+      return { ...state, isLoading: true };
     }
     case FETCH_NEWS_SUCCESS: {
-      const {result, page} = action;
-      const {newsList} = state;
+      const { result, page } = action;
+      const { newsList } = state;
       const updatedNewsList =
         page === 1 ? [...result] : [...newsList, ...result];
       return {
@@ -54,15 +54,15 @@ const reducer = (state = initialState, action) => {
       };
     }
     case SET_CURRENT_SLIDE_INDEX: {
-      const {index} = action;
-      return {...state, currentNewsSlideIndex: index};
+      const { index } = action;
+      return { ...state, currentNewsSlideIndex: index };
     }
     case SET_WEBVIEW_VISIBILITY: {
-      const {isWebViewVisible} = action;
-      return {...state, isWebViewVisible};
+      const { isWebViewVisible } = action;
+      return { ...state, isWebViewVisible };
     }
     case FETCH_TRENDING_TOPICS_SUCCESS: {
-      const {result} = action;
+      const { result } = action;
       return {
         ...state,
         trendingTopics: result.trending_tags,
@@ -75,18 +75,18 @@ const reducer = (state = initialState, action) => {
       };
     }
     case FETCH_CATEGORY_NEWS_SUCCESS: {
-      const {result, category, newsOffset} = action;
+      const { result, category, newsOffset } = action;
       const hashIdsSet = new Set(state.newsList.map(item => item.hash_id));
       return {
         ...state,
         newsList: !newsOffset
           ? result.news_list
           : [
-              ...state.newsList,
-              ...result.news_list.filter(item => {
-                return !hashIdsSet.has(item.hash_id);
-              }),
-            ],
+            ...state.newsList,
+            ...result.news_list.filter(item => {
+              return !hashIdsSet.has(item.hash_id);
+            }),
+          ],
         selectedCategory: category,
         newsOffset: result.min_news_id,
         isLoading: false,
@@ -109,7 +109,7 @@ const reducer = (state = initialState, action) => {
       };
     }
     case FETCH_TOPIC_NEWS_SUCCESS: {
-      const {result, topicId, page} = action;
+      const { result, topicId, page } = action;
       return {
         ...state,
         newsList:
@@ -128,7 +128,7 @@ const reducer = (state = initialState, action) => {
       };
     }
     default: {
-      return {...state};
+      return { ...state };
     }
   }
 };
@@ -172,7 +172,7 @@ export const fetchTrendingTopics = () => {
 
 export const fetchCategoryNews = (category, newsOffset = null) => {
   return dispatch => {
-    dispatch({type: FETCH_CATEGORY_NEWS_LOADING, namespace: NAMESPACE});
+    dispatch({ type: FETCH_CATEGORY_NEWS_LOADING, namespace: NAMESPACE });
     let URL = `${INSHORTS_BASE_URL}/news?category=${category}&max_limit=10&include_card_data=true`;
     if (newsOffset) {
       URL += `&news_offset=${newsOffset}`;
@@ -202,7 +202,7 @@ export const fetchCategoryNews = (category, newsOffset = null) => {
         });
         // }, 5);
       })
-      .catch(err => {});
+      .catch(err => { });
   };
 };
 
@@ -224,7 +224,7 @@ export const selectTopic = topicId => {
 
 export const fetchTopicNews = (topicId, page = 1) => {
   return dispatch => {
-    dispatch({type: FETCH_TOPIC_NEWS_LOADING, namespace: NAMESPACE});
+    dispatch({ type: FETCH_TOPIC_NEWS_LOADING, namespace: NAMESPACE });
     let URL = `${INSHORTS_BASE_URL}/search/trending_topics/${topicId}?page=${page}&type=NEWS_CATEGORY`;
 
     Axios.get(URL)
